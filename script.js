@@ -1,11 +1,4 @@
-// Modern, accessible JS for Search Linebox
-// Features:
-// - add search items via Enter or Search button
-// - render items into list with edit & delete
-// - inline editing with Save/Cancel
-// - keyboard support (Enter to add, E to edit when item focused, Delete to remove)
-// - persistent via localStorage
-// - delegated event handling
+
 
 (() => {
   const LS_KEY = 'search_linebox_items_v1';
@@ -50,7 +43,19 @@
       textEl.textContent = it.text;
       editInput.value = it.text;
 
-      // create accessible label for each list item
+
+
+
+
+
+
+
+
+
+
+
+
+
       node.setAttribute('aria-label', `Search: ${it.text}`);
 
       list.appendChild(node);
@@ -62,10 +67,15 @@
       id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
       text: text.trim()
     };
-    items.unshift(item); // newest on top
+    items.unshift(item); 
     save();
     render();
-    // Focus newly created element for clarity
+
+
+
+
+
+
     const first = list.querySelector('[data-id]');
     if (first) {
       first.focus();
@@ -76,7 +86,6 @@
     return items.findIndex(i => i.id === id);
   }
 
-  // handle submit (add/search)
   form.addEventListener('submit', (ev) => {
     ev.preventDefault();
     const q = input.value.trim();
@@ -88,13 +97,22 @@
     input.value = '';
   });
 
-  // clear button
+
+
+
+
+
+
+
+
+
+
+
   btnClear.addEventListener('click', () => {
     input.value = '';
     input.focus();
   });
 
-  // delegate clicks for edit/delete/save/cancel
   list.addEventListener('click', (ev) => {
     const actionBtn = ev.target.closest('.icon-btn');
     if (!actionBtn) return;
@@ -104,27 +122,21 @@
     const idx = findItemIndexById(id);
     if (idx === -1) return;
 
-    // Edit
     if (actionBtn.classList.contains('edit-btn')) {
       startEditing(itemEl);
       return;
     }
-    // Save
     if (actionBtn.classList.contains('save-btn')) {
       finishEditing(itemEl, true);
       return;
     }
-    // Cancel
     if (actionBtn.classList.contains('cancel-btn')) {
       finishEditing(itemEl, false);
       return;
     }
-    // Delete
     if (actionBtn.classList.contains('delete-btn')) {
-      // remove item
       items.splice(idx, 1);
       save();
-      // animate removal
       itemEl.style.transition = 'opacity 160ms ease, transform 160ms ease';
       itemEl.style.opacity = '0';
       itemEl.style.transform = 'translateX(20px)';
@@ -133,16 +145,13 @@
     }
   });
 
-  // double click text to edit
   list.addEventListener('dblclick', (ev) => {
     const item = ev.target.closest('.result-item');
     if (!item) return;
     startEditing(item);
   });
 
-  // inline edit helpers
   function startEditing(itemEl) {
-    // close other editing items
     const other = list.querySelector('.result-item.editing');
     if (other && other !== itemEl) {
       finishEditing(other, false);
@@ -151,7 +160,6 @@
     const editInput = itemEl.querySelector('.item-edit');
     const saveBtn = itemEl.querySelector('.save-btn');
     const cancelBtn = itemEl.querySelector('.cancel-btn');
-    // show buttons
     saveBtn.hidden = false;
     cancelBtn.hidden = false;
     editInput.focus();
@@ -168,16 +176,13 @@
     if (saveChanges) {
       const val = editInput.value.trim();
       if (val === '') {
-        // empty -> delete
         items.splice(idx, 1);
       } else {
         items[idx].text = val;
       }
       save();
     }
-    // exit edit mode and re-render
     itemEl.classList.remove('editing');
-    // hide action buttons
     const saveBtn = itemEl.querySelector('.save-btn');
     const cancelBtn = itemEl.querySelector('.cancel-btn');
     if (saveBtn) saveBtn.hidden = true;
@@ -185,7 +190,6 @@
     render();
   }
 
-  // keyboard shortcuts on list items
   list.addEventListener('keydown', (ev) => {
     const itemEl = ev.target.closest('.result-item');
     if (!itemEl) return;
@@ -194,7 +198,6 @@
     if (idx === -1) return;
 
     if (ev.key === 'e' || ev.key === 'E') {
-      // quick edit
       ev.preventDefault();
       startEditing(itemEl);
     } else if (ev.key === 'Delete') {
@@ -203,7 +206,6 @@
       save();
       render();
     } else if (ev.key === 'Enter') {
-      // if in edit mode, save; otherwise do nothing
       if (itemEl.classList.contains('editing')) {
         ev.preventDefault();
         finishEditing(itemEl, true);
@@ -215,7 +217,6 @@
     }
   });
 
-  // allow focusing items via click / keyboard
   list.addEventListener('focusin', (ev) => {
     const item = ev.target.closest('.result-item');
     if (item) item.classList.add('focused');
@@ -225,7 +226,6 @@
     if (item) item.classList.remove('focused');
   });
 
-  // make created elements keyboard-focusable (delegated)
   list.addEventListener('click', (ev) => {
     const item = ev.target.closest('.result-item');
     if (item) {
@@ -234,10 +234,8 @@
     }
   });
 
-  // initial render
   render();
 
-  // expose for debugging (optional)
   window._SearchLinebox = {
     get items(){ return items },
     clear(){
